@@ -1,8 +1,8 @@
 module github.com/heroiclabs/nakama-project-template
 
-go 1.23.5
+go 1.25.0
 
 require (
-	github.com/heroiclabs/nakama-common v1.36.0
-	google.golang.org/protobuf v1.36.4
+	github.com/heroiclabs/nakama-common v1.42.2
+	google.golang.org/protobuf v1.36.8
 )
