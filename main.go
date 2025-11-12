@@ -17,9 +17,8 @@ package main
 import (
 	"context"
 	"database/sql"
+
 	"github.com/heroiclabs/nakama-common/runtime"
-	"google.golang.org/protobuf/encoding/protojson"
-	"time"
 )
 
 var (
@@ -37,37 +36,60 @@ const (
 
 // noinspection GoUnusedExportedFunction
 func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, initializer runtime.Initializer) error {
-	initStart := time.Now()
+	//initStart := time.Now()
+	//
+	//marshaler := &protojson.MarshalOptions{
+	//	UseEnumNumbers: true,
+	//}
+	//unmarshaler := &protojson.UnmarshalOptions{
+	//	DiscardUnknown: false,
+	//}
 
-	marshaler := &protojson.MarshalOptions{
-		UseEnumNumbers: true,
-	}
-	unmarshaler := &protojson.UnmarshalOptions{
-		DiscardUnknown: false,
-	}
+	//for adding user
+	username := "amir_123"
+	password := "12345678"
+	email := "test@gmail.com"
 
-	if err := initializer.RegisterRpc(rpcIdRewards, rpcRewards); err != nil {
-		return err
-	}
-
-	if err := initializer.RegisterRpc(rpcIdFindMatch, rpcFindMatch(marshaler, unmarshaler)); err != nil {
-		return err
-	}
-
-	if err := initializer.RegisterMatch(moduleName, func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule) (runtime.Match, error) {
-		return &MatchHandler{
-			marshaler:        marshaler,
-			unmarshaler:      unmarshaler,
-			tfServingAddress: "http://tf:8501/v1/models/ttt:predict",
-		}, nil
-	}); err != nil {
-		return err
+	userID, _, _, err := nk.AuthenticateEmail(ctx, email, password, username, true)
+	if err != nil {
+		logger.WithField("error", err.Error()).Error("❌ Failed to create user")
+	} else {
+		logger.WithField("user_id", userID).Info("✅ User1 created successfully!")
 	}
 
-	if err := registerSessionEvents(db, nk, initializer); err != nil {
-		return err
+	username_1 := "amir_124"
+	password_1 := "12345687"
+	email_1 := "test@gmail.com"
+
+	userID, _, _, err = nk.AuthenticateEmail(ctx, email_1, password_1, username_1, true)
+	if err != nil {
+		logger.WithField("error", err.Error()).Error("❌ Failed to create user")
+	} else {
+		logger.WithField("user_id", userID).Info("✅ User2 created successfully!")
 	}
 
-	logger.Info("Plugin loaded in '%d' msec.", time.Now().Sub(initStart).Milliseconds())
+	//if err := initializer.RegisterRpc(rpcIdRewards, rpcRewards); err != nil {
+	//	return err
+	//}
+	//
+	//if err := initializer.RegisterRpc(rpcIdFindMatch, rpcFindMatch(marshaler, unmarshaler)); err != nil {
+	//	return err
+	//}
+	//
+	//if err := initializer.RegisterMatch(moduleName, func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule) (runtime.Match, error) {
+	//	return &MatchHandler{
+	//		marshaler:        marshaler,
+	//		unmarshaler:      unmarshaler,
+	//		tfServingAddress: "http://tf:8501/v1/models/ttt:predict",
+	//	}, nil
+	//}); err != nil {
+	//	return err
+	//}
+	//
+	//if err := registerSessionEvents(db, nk, initializer); err != nil {
+	//	return err
+	//}
+
+	//logger.Info("Plugin loaded in '%d' msec.", time.Now().Sub(initStart).Milliseconds())
 	return nil
 }
